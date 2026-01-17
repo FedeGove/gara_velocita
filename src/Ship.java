@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public class Ship extends Thread{
+public class Ship implements Runnable {
     private String type;
     private String pilot;
     private String destination;
@@ -38,12 +38,12 @@ public class Ship extends Thread{
                 distanceTraveled += speed;
 
                 if (distanceTraveled >= judge.getPlanetDistance()) {
-                distanceTraveled = judge.getPlanetDistance();
-                inRace = false;
-                System.out.println("Astronave " + type + " pilotata da " + pilot + " ha raggiunto " + destination + "!");
-                judge.recordFinish(this);
+                    distanceTraveled = judge.getPlanetDistance();
+                    inRace = false;
+                    System.out.println("Astronave " + type + " pilotata da " + pilot + " ha raggiunto " + destination + "!");
+                    judge.recordFinish(this);
                 } else {
-                System.out.println("Astronave " + type + " pilotata da " + pilot + " mancano " + (judge.getPlanetDistance() - distanceTraveled) + " km verso " + destination);
+                    System.out.println("Astronave " + type + " pilotata da " + pilot + " mancano " + (judge.getPlanetDistance() - distanceTraveled) + " km verso " + destination);
                 }
             } catch (InterruptedException e) {
                 inRace = false;

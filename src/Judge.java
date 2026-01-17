@@ -7,13 +7,17 @@ public class Judge {
     private boolean started = false;
     
     private ArrayList<Ship> ships;
+    private ArrayList<Thread> threads;
     private ArrayList<Ship> ranking;
+    private FileManager fileManager;
 
     public Judge(String finalPlanet, int planetDistance) {
         this.finalPlanet = finalPlanet;
         this.planetDistance = planetDistance;
         this.ships = new ArrayList<>();
+        this.threads = new ArrayList<>();
         this.ranking = new ArrayList<>();
+        this.fileManager = new FileManager("race_results.txt");
     }
 
     public void addShip(Ship ship) {
@@ -24,9 +28,13 @@ public class Judge {
         
         System.out.println("La gara verso: " + finalPlanet + " è iniziata!");
         System.out.println("Partecipanti: " + ships.size());
+        
+        fileManager.writeShipsData(ships);
 
         for (Ship ship : ships) {
-            ship.start();
+            Thread thread = new Thread(ship);
+            threads.add(thread);
+            thread.start();
         }
 
         try {
@@ -39,9 +47,9 @@ public class Judge {
     }    
 
     public void waitForFinish() {
-        for (Ship ship : ships) {
+        for (Thread thread : threads) {
             try {
-                ship.join();
+                thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -64,7 +72,11 @@ public class Judge {
             Ship ship = ranking.get(i);
             System.out.println((i + 1) + "° posto: " + ship.getType() + " con pilota " + ship.getPilot());
         }
-
+        
+        fileManager.writeRanking(ranking, finalPlanet);
+        
+        System.out.println();
+        fileManager.readFile();
     }
 
     public int getPlanetDistance() {
